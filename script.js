@@ -1,47 +1,9 @@
-const numbers = document.querySelectorAll(".number");
-
-numbers.forEach((number) => {
-  console.log(numbers);
-});
-
-numbers.forEach((number) => {
-  number.addEventListener("click", () => {
-    console.log("number is pressed");
-  });
-});
-
-numbers.forEach((number) => {
-  number.addEventListener("click", (event) => {
-    console.log(event.target.value);
-  });
-});
-
 const calculatorScreen = document.querySelector(".calculator-screen");
 
 const updateScreen = (number) => {
   calculatorScreen.value = number;
 };
-
-// const numbers = document.querySelectorAll(".number");
-
-numbers.forEach((number) => {
-  number.addEventListener("click", (event) => {
-    updateScreen(event.target.value);
-  });
-});
-
-// let prevNumber = "";
-// let calculationOperator = "";
-// let currentNumber = "";
-
-/* INPUT NUMBER */
-const inputNumber = (number) => {
-  if (currentNumber === "0") {
-    currentNumber = number;
-  } else {
-    currentNumber += number;
-  }
-};
+const numbers = document.querySelectorAll(".number");
 
 numbers.forEach((number) => {
   number.addEventListener("click", (event) => {
@@ -50,28 +12,39 @@ numbers.forEach((number) => {
   });
 });
 
-/* OPERATOR */
+let prevNumber = "";
+let calculationOperator = "";
+let currentNumber = "0";
+
+const inputNumber = (number) => {
+  if (currentNumber === "0") {
+    currentNumber = number;
+  } else {
+    currentNumber += number;
+  }
+};
 
 const operators = document.querySelectorAll(".operator");
 
 operators.forEach((operator) => {
   operator.addEventListener("click", (event) => {
     inputOperator(event.target.value);
-    // console.log(event.target.value);
   });
 });
 
 const inputOperator = (operator) => {
-  prevNumber = currentNumber;
+  if (calculationOperator === "") {
+    prevNumber = currentNumber;
+  }
   calculationOperator = operator;
-  curruntNumber = "";
+  currentNumber = "";
 };
 
 const equalSign = document.querySelector(".equal-sign");
 
 equalSign.addEventListener("click", () => {
-  console.log("equal button is pressed");
   calculate();
+  console.log(currentNumber);
   updateScreen(currentNumber);
 });
 
@@ -82,40 +55,66 @@ const calculate = () => {
       result = parseFloat(prevNumber) + parseFloat(currentNumber);
       break;
     case "-":
-      result = prevNumber - currentNumber;
+      result = parseFloat(prevNumber) - parseFloat(currentNumber);
       break;
     case "*":
-      result = prevNumber * currentNumber;
+      result = parseFloat(prevNumber) * parseFloat(currentNumber);
       break;
     case "/":
-      result = prevNumber / currentNumber;
+      result = parseFloat(prevNumber) / parseFloat(currentNumber);
       break;
     default:
-      return;
+      break;
   }
   currentNumber = result;
   calculationOperator = "";
 };
 
-const clearAll = () => {
-  prevNumber = "";
-  calculationOperator = "";
-  curruntNumber = "0";
-};
 const clearBtn = document.querySelector(".all-clear");
 
 clearBtn.addEventListener("click", () => {
-  console.log("AC button is pressed");
+  clearAll();
+  updateScreen(currentNumber);
 });
 
-const decimal = document.querySelector(". decimal");
+const clearAll = () => {
+  prevNumber = "";
+  calculationOperator = "";
+  currentNumber = "0";
+};
+
+const decimal = document.querySelector(".decimal");
 
 decimal.addEventListener("click", (event) => {
-  // console.log(event.target.value)
   inputDecimal(event.target.value);
   updateScreen(currentNumber);
 });
 
-inputDecimal = (dot) => {
+const inputDecimal = (dot) => {
+  if (currentNumber.includes(".")) {
+    return;
+  }
   currentNumber += dot;
+};
+
+const percentage = document.querySelector(".percentage");
+
+percentage.addEventListener("click", (event) => {
+  inputPercentage(event.target.value);
+  updateScreen(currentNumber);
+});
+
+const inputPercentage = (percentage) => {
+  if (currentNumber.includes("%")) {
+    return;
+  }
+  var divided = currentNumber / 100;
+  console.log("divided", divided);
+  if (calculationOperator === "*" || calculationOperator === "/") {
+    console.log("x");
+    currentNumber = divided;
+  } else {
+    console.log("else", calculationOperator);
+    currentNumber = (currentNumber * prevNumber) / 100;
+  }
 };
